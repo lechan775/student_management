@@ -117,17 +117,127 @@ student_management/
 
 ---
 
-## 🚀 宇宙版（计划中）
+## 🚀 宇宙版（Web 全栈 / 前后端一体化）
 
-> 下一阶段规划，欢迎贡献！
+> 路径：`universe/` — Spring Boot 3.2 + Vue 3 SPA + ECharts + JWT
 
-| 方向 | 技术选型 | 功能 |
-|------|---------|------|
-| Web 化 | Spring Boot + Vue/React | 前后端分离，RESTful API |
-| 可视化 | ECharts | 院系分布 / 性别比例 图表 |
-| 权限 | Spring Security + JWT | 多角色（管理员/教师/学生） |
-| 导入导出 | Apache POI | Excel 批量导入导出 |
-| 日志 | 操作日志表 | 审计追踪 |
+### 🆚 相比进阶版的核心升级
+
+| 维度 | 进阶版 | 宇宙版 |
+|------|--------|--------|
+| 访问方式 | 命令行 | **浏览器 Web 界面** |
+| 后端 | 裸 JDBC | **Spring Boot REST API** |
+| 前端 | 无 | **Vue 3 SPA + ECharts** |
+| 数据库 | SQLite | **H2（嵌入式，零配置）** |
+| 认证 | BCrypt | **Spring Security + JWT** |
+| 角色 | 无 | **ADMIN / TEACHER / STUDENT** |
+| 可视化 | 无 | **ECharts 饼图（院系/性别分布）** |
+| 导出 | 无 | **Excel 导出（Apache POI）** |
+| 审计 | 无 | **操作日志表** |
+
+### 技术栈
+
+| 层 | 技术 |
+|----|------|
+| 后端框架 | Spring Boot 3.2.5 |
+| 安全 | Spring Security + JWT（jjwt 0.12） |
+| 持久层 | Spring Data JPA + H2 Database |
+| 前端框架 | Vue 3 (CDN) + ECharts 5.5 |
+| Excel | Apache POI 5.2 |
+| 构建 | Maven |
+
+### 快速开始
+
+```bash
+# 1. 编译
+cd universe
+mvn clean compile
+
+# 2. 启动（首次运行自动创建 H2 数据库）
+mvn spring-boot:run
+
+# 3. 打开浏览器
+# http://localhost:8080
+# 初始管理员: admin / admin123
+```
+
+### 项目结构
+
+```
+universe/
+├── pom.xml
+└── src/main/
+    ├── java/com/studentmanage/universe/
+    │   ├── UniverseApplication.java
+    │   ├── config/
+    │   │   ├── SecurityConfig.java       ← 安全配置+权限矩阵
+    │   │   └── JwtAuthFilter.java        ← JWT 过滤器
+    │   ├── model/
+    │   │   ├── User.java                 ← 用户实体（含角色枚举）
+    │   │   ├── Student.java              ← 学生实体（8字段）
+    │   │   └── OperationLog.java         ← 操作日志
+    │   ├── repository/
+    │   │   ├── UserRepository.java
+    │   │   ├── StudentRepository.java
+    │   │   └── OperationLogRepository.java
+    │   ├── service/
+    │   │   ├── AuthService.java
+    │   │   ├── StudentService.java
+    │   │   └── LogService.java
+    │   ├── controller/
+    │   │   ├── AuthController.java       ← /api/auth/**
+    │   │   ├── StudentController.java    ← /api/students/**
+    │   │   └── DashboardController.java  ← /api/dashboard, /api/export/**
+    │   ├── dto/                          ← 请求/响应 DTO
+    │   └── util/
+    │       └── JwtUtil.java              ← JWT 生成/解析
+    └── resources/
+        ├── application.yml
+        ├── data.sql                      ← 初始化管理员
+        └── static/                       ← 前端 SPA
+            ├── index.html
+            ├── css/style.css
+            └── js/app.js
+```
+
+### REST API 一览
+
+| 方法 | 路径 | 权限 | 说明 |
+|------|------|------|------|
+| POST | `/api/auth/login` | 公开 | 登录，返回 JWT |
+| POST | `/api/auth/register` | 公开 | 注册 |
+| POST | `/api/auth/reset-password` | 公开 | 忘记密码 |
+| GET | `/api/auth/me` | 登录 | 当前用户信息 |
+| GET | `/api/students` | ALL | 学生列表 |
+| POST | `/api/students` | ADMIN/TEACHER | 添加学生 |
+| PUT | `/api/students/{id}` | ADMIN/TEACHER | 更新学生 |
+| DELETE | `/api/students/{id}` | ADMIN/TEACHER | 删除学生 |
+| GET | `/api/students/search?name=` | ALL | 姓名模糊搜索 |
+| GET | `/api/students/filter?dept=` | ALL | 院系过滤 |
+| GET | `/api/dashboard` | ADMIN/TEACHER | 仪表盘统计 |
+| GET | `/api/export/excel` | ADMIN/TEACHER | 导出 Excel |
+| GET | `/api/logs` | ADMIN | 操作日志 |
+
+### 权限矩阵
+
+| 功能 | ADMIN | TEACHER | STUDENT |
+|------|-------|---------|---------|
+| 查看仪表盘 | ✅ | ✅ | ❌ |
+| 添加/删除/编辑学生 | ✅ | ✅ | ❌ |
+| 查看学生列表 | ✅ | ✅ | ✅ |
+| 导出 Excel | ✅ | ✅ | ❌ |
+| 查看操作日志 | ✅ | ❌ | ❌ |
+
+### 功能清单
+
+- ✅ JWT 认证（登录/注册/忘记密码）
+- ✅ 三角色权限控制
+- ✅ 学生 CRUD + 多维度搜索
+- ✅ ECharts 仪表盘（院系分布 + 性别比例饼图）
+- ✅ Excel 一键导出
+- ✅ 操作日志审计
+- ✅ Vue 3 响应式 SPA 前端
+- ✅ H2 嵌入式数据库（零配置）
 
 ---
 

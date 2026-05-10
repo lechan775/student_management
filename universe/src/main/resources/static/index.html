@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生信息管理系统 — 宇宙版</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.4.27/dist/vue.global.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+</head>
+<body>
+<div id="app">
+
+    <!-- ═══════════ Toast 消息 ═══════════ -->
+    <div v-if="message.text" :class="'toast toast-' + (message.type === 'error' ? 'error' : 'success')">
+        {{ message.text }}
+    </div>
+
+    <!-- ═══════════ 登录界面 ═══════════ -->
+    <div v-if="!loggedIn" class="login-container">
+
+        <!-- 登录 -->
+        <div class="login-card" v-if="view === 'login'">
+            <h1>🚀 学生管理系统</h1>
+            <p class="subtitle">宇宙版 — Spring Boot + Vue3 + ECharts</p>
+            <input v-model="loginForm.username" placeholder="用户名" @keyup.enter="doLogin">
+            <input v-model="loginForm.password" type="password" placeholder="密码" @keyup.enter="doLogin">
+            <button @click="doLogin">登 录</button>
+            <div class="links">
+                <a @click="view='register'">注册账号</a> |
+                <a @click="view='forgot'">忘记密码</a>
+            </div>
+            <div style="text-align:center;margin-top:12px;font-size:12px;color:#aaa;">
+                初始化管理员: admin / admin123
+            </div>
+        </div>
+
+        <!-- 注册 -->
+        <div class="login-card" v-if="view === 'register'">
+            <h1>注册账号</h1>
+            <p class="subtitle">创建新用户（默认为学生角色）</p>
+            <input v-model="regForm.username" placeholder="用户名 (3~15位)">
+            <input v-model="regForm.password" type="password" placeholder="密码">
+            <input v-model="regForm.password2" type="password" placeholder="确认密码">
+            <input v-model="regForm.personId" placeholder="身份证号 (18位)">
+            <input v-model="regForm.phoneNumber" placeholder="手机号 (11位)">
+            <button @click="doRegister">注 册</button>
+            <div class="links">
+                <a @click="view='login'">已有账号？去登录</a>
+            </div>
+        </div>
+
+        <!-- 忘记密码 -->
+        <div class="login-card" v-if="view === 'forgot'">
+            <h1>找回密码</h1>
+            <p class="subtitle">验证身份后重置密码</p>
+            <input v-model="forgotForm.username" placeholder="用户名">
+            <input v-model="forgotForm.personId" placeholder="身份证号">
+            <input v-model="forgotForm.phone" placeholder="手机号">
+            <input v-model="forgotForm.newPassword" type="password" placeholder="新密码">
+            <input v-model="forgotForm.newPassword2" type="password" placeholder="确认新密码">
+            <button @click="doForgotPassword">重置密码</button>
+            <div class="links">
+                <a @click="view='login'">返回登录</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════ 主应用（登录后） ═══════════ -->
+    <div v-if="loggedIn" id="app-main" style="display:block;">
+
+        <!-- 导航栏 -->
+        <nav class="navbar">
+            <div class="brand">🚀 学生管理系统</div>
+            <div class="nav-links">
+                <a :class="{ active: activeNav === 'dashboard' }" @click="switchNav('dashboard')">📊 仪表盘</a>
+                <a :class="{ active: activeNav === 'students' }" @click="switchNav('students')">👨‍🎓 学生管理</a>
+                <a v-if="user.role === 'ADMIN'" :class="{ active: activeNav === 'logs' }" @click="switchNav('logs')">📋 操作日志</a>
+            </div>
+            <div class="user-info">
+                <span>{{ user.username }}</span>
+                <span :class="'role-badge ' + user.role">{{ user.role }}</span>
+                <a @click="logout" style="cursor:pointer;color:#e74c3c;font-size:13px;">退出</a>
+            </div>
+        </nav>
+
+        <div class="main-content">
+
+            <!-- ═══════════ 仪表盘 ═══════════ -->
+            <div v-if="activeNav === 'dashboard'">
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="num">{{ dashboardStats?.totalStudents || 0 }}</div>
+                        <div class="label">学生总数</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="num">{{ dashboardStats?.totalUsers || 0 }}</div>
+                        <div class="label">用户总数</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="num">{{ Object.keys(dashboardStats?.deptDistribution || {}).length }}</div>
+                        <div class="label">院系数</div>
+                    </div>
+                    <div class="stat-card">
+                        <button class="btn-primary" @click="switchNav('students')" style="padding:10px 24px;font-size:16px;">
+                            ➕ 管理学生
+                        </button>
+                        <div class="label" style="margin-top:8px;">跳转至学生管理</div>
+                    </div>
+                </div>
+
+                <div class="charts-row">
+                    <div class="card">
+                        <div id="chart-dept" class="chart-box"></div>
+                    </div>
+                    <div class="card">
+                        <div id="chart-sex" class="chart-box"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══════════ 学生管理 ═══════════ -->
+            <div v-if="activeNav === 'students'">
+                <div class="card">
+                    <h2>👨‍🎓 学生信息管理</h2>
+
+                    <!-- 工具栏 -->
+                    <div class="toolbar">
+                        <input v-model="searchKeyword" placeholder="按姓名搜索..." @keyup.enter="loadStudents" style="width:200px;">
+                        <input v-model="filterDept" placeholder="按院系过滤..." @keyup.enter="loadStudents" style="width:200px;">
+                        <button class="btn-outline" @click="loadStudents">🔍 搜索</button>
+                        <button class="btn-outline" @click="searchKeyword=''; filterDept=''; loadStudents()">↻ 重置</button>
+                        <span style="flex:1;"></span>
+                        <button class="btn-primary" @click="openAddModal" v-if="user.role !== 'STUDENT'">➕ 添加学生</button>
+                        <button class="btn-success" @click="exportExcel">📥 导出 Excel</button>
+                    </div>
+
+                    <!-- 表格 -->
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>学号</th>
+                                <th>姓名</th>
+                                <th>年龄</th>
+                                <th>性别</th>
+                                <th>院系</th>
+                                <th>班级</th>
+                                <th>邮箱</th>
+                                <th>手机</th>
+                                <th v-if="user.role !== 'STUDENT'">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="stu in paginatedStudents" :key="stu.id">
+                                <td>{{ stu.studentId }}</td>
+                                <td>{{ stu.name }}</td>
+                                <td>{{ stu.age }}</td>
+                                <td>{{ stu.sex }}</td>
+                                <td>{{ stu.department || '-' }}</td>
+                                <td>{{ stu.className || '-' }}</td>
+                                <td>{{ stu.email || '-' }}</td>
+                                <td>{{ stu.phone || '-' }}</td>
+                                <td v-if="user.role !== 'STUDENT'" class="actions">
+                                    <button class="btn-warning" @click="openEditModal(stu)">编辑</button>
+                                    <button class="btn-danger" @click="deleteStudent(stu.id)">删除</button>
+                                </td>
+                            </tr>
+                            <tr v-if="paginatedStudents.length === 0">
+                                <td :colspan="user.role !== 'STUDENT' ? 9 : 8" style="text-align:center;padding:40px;color:#999;">
+                                    暂无数据
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- 分页 -->
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;font-size:13px;color:#666;">
+                        <span>共 {{ totalStudents }} 条，第 {{ currentPage }}/{{ totalPages }} 页</span>
+                        <div style="display:flex;gap:8px;">
+                            <button class="btn-outline" @click="goPage(1)" :disabled="currentPage===1">首页</button>
+                            <button class="btn-outline" @click="goPage(currentPage-1)" :disabled="currentPage===1">上一页</button>
+                            <button class="btn-outline" @click="goPage(currentPage+1)" :disabled="currentPage===totalPages">下一页</button>
+                            <button class="btn-outline" @click="goPage(totalPages)" :disabled="currentPage===totalPages">末页</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 添加/编辑对话框 -->
+                <div :class="['modal-overlay', { show: showModal }]" @click.self="showModal=false">
+                    <div class="modal">
+                        <h2>{{ modalMode === 'add' ? '添加学生' : '编辑学生' }}</h2>
+                        <div class="form-group">
+                            <label>学号 *</label>
+                            <input v-model="studentForm.studentId" :disabled="modalMode === 'edit'">
+                        </div>
+                        <div class="form-group">
+                            <label>姓名 *</label>
+                            <input v-model="studentForm.name">
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+                            <div class="form-group">
+                                <label>年龄 *</label>
+                                <input v-model.number="studentForm.age" type="number">
+                            </div>
+                            <div class="form-group">
+                                <label>性别 *</label>
+                                <select v-model="studentForm.sex">
+                                    <option>男</option><option>女</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+                            <div class="form-group">
+                                <label>院系</label>
+                                <input v-model="studentForm.department">
+                            </div>
+                            <div class="form-group">
+                                <label>班级</label>
+                                <input v-model="studentForm.className">
+                            </div>
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+                            <div class="form-group">
+                                <label>邮箱</label>
+                                <input v-model="studentForm.email">
+                            </div>
+                            <div class="form-group">
+                                <label>手机</label>
+                                <input v-model="studentForm.phone">
+                            </div>
+                        </div>
+                        <div class="modal-actions">
+                            <button class="btn-cancel" @click="showModal=false">取消</button>
+                            <button class="btn-primary" @click="saveStudent">
+                                {{ modalMode === 'add' ? '添加' : '保存' }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══════════ 操作日志 ═══════════ -->
+            <div v-if="activeNav === 'logs'">
+                <div class="card">
+                    <h2>📋 操作日志（最近20条）</h2>
+                    <div class="log-list">
+                        <div v-for="log in logs" :key="log.id" class="log-item">
+                            <span class="log-time">{{ log.createdAt }}</span>
+                            <span class="log-op">{{ log.operation }}</span>
+                            <span class="log-user">{{ log.username }}</span>
+                            <span>{{ log.detail }}</span>
+                        </div>
+                        <div v-if="logs.length === 0" style="text-align:center;padding:40px;color:#999;">
+                            暂无日志
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<script src="/js/app.js"></script>
+</body>
+</html>
