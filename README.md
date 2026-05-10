@@ -1,305 +1,291 @@
-# student_management
+<!-- markdownlint-disable -->
+<div align="center">
 
-管理员登录界面 + 内部学生信息管理
-该仓库旨在按照不同等级，完善全套学生信息管理系统
-新手村 → 进阶版 → 宇宙版 → ☄️ 宇宙爆炸版
+<a href="https://github.com/lechan775/student_management">
+  <img src="docs/images/banner.png" alt="Student Management System Banner" width="100%">
+</a>
+
+<h1>Student Management System</h1>
+
+<p><strong>From Console to Cloud — The Full-Stack Evolution</strong></p>
+
+[中文](README.zh-CN.md) | English | [日本語](README.ja.md)
+
+<p>
+  <a href="https://github.com/lechan775/student_management/actions">
+    <img src="https://img.shields.io/github/actions/workflow/status/lechan775/student_management/.github/workflows/ci.yml?branch=main&label=CI&logo=github&style=flat-square" alt="CI Status">
+  </a>
+  <a href="https://github.com/lechan775/student_management/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/lechan775/student_management?style=flat-square&color=blue" alt="License MIT">
+  </a>
+  <img src="https://img.shields.io/badge/Java-17%2B-orange?style=flat-square&logo=openjdk" alt="Java 17+">
+  <img src="https://img.shields.io/badge/Spring%20Boot-3.2.5-brightgreen?style=flat-square&logo=springboot" alt="Spring Boot 3.2.5">
+  <img src="https://img.shields.io/badge/Vue-3.4-4FC08D?style=flat-square&logo=vue.js" alt="Vue 3.4">
+  <img src="https://img.shields.io/badge/Docker-Ready-2496ED?style=flat-square&logo=docker" alt="Docker Ready">
+  <img src="https://img.shields.io/badge/MySQL-8.0-4479A1?style=flat-square&logo=mysql" alt="MySQL 8.0">
+  <img src="https://img.shields.io/badge/Redis-7-DC382D?style=flat-square&logo=redis" alt="Redis 7">
+  <img src="https://img.shields.io/badge/JUnit-5-25A162?style=flat-square&logo=junit5" alt="JUnit 5">
+  <a href="https://github.com/lechan775/student_management/stargazers">
+    <img src="https://img.shields.io/github/stars/lechan775/student_management?style=flat-square&color=yellow" alt="Stars">
+  </a>
+  <a href="https://github.com/lechan775/student_management/commits/main">
+    <img src="https://img.shields.io/github/last-commit/lechan775/student_management?style=flat-square&color=purple" alt="Last Commit">
+  </a>
+</p>
+
+<p>
+  <a href="#-quick-start">🚀 Quick Start</a> •
+  <a href="#-architecture">🏗 Architecture</a> •
+  <a href="#-evolution-roadmap">🗺 Evolution</a> •
+  <a href="#-api-reference">📡 API</a> •
+  <a href="#-tech-stack">🛠 Tech Stack</a> •
+  <a href="#-project-structure">📂 Structure</a> •
+  <a href="#-contributing">🤝 Contributing</a>
+</p>
+
+</div>
 
 ---
 
-## 🏘️ 新手村版本（控制台 / 无数据库）
+## 📖 Introduction
 
-> 路径：`Student_manage/` — 纯 Java 命令行，无外部依赖，ArrayList 内存存储
+**Student Management System** is a progressive full-stack educational project that demonstrates the complete evolution from a simple Java console application to a production-grade web platform. Designed as a learning roadmap for CS undergraduates, each version introduces enterprise-grade engineering practices incrementally.
 
-### 一、登录界面
+Whether you're a beginner learning Java basics or an advanced developer exploring Docker, CI/CD, and microservice patterns — this repository has a version tailored for you.
 
-| 功能 | 说明 |
-|------|------|
-| 登录 | 用户名查找 + 验证码验证 |
-| 注册 | 用户名唯一性检查 / 身份证号合法性校验 / 手机号合法性校验 / 两次密码一致 |
-| 忘记密码 | 校验用户名 + 手机号 + 身份证号 三者匹配后方可改密码 |
-
-### 二、学生信息管理系统
-
-| 功能 | 说明 |
-|------|------|
-| 添加学生 | 学号、姓名、年龄、性别（4 项） |
-| 删除学生 | 按学号删除 |
-| 查询学生 | 按学号精确查询 |
-| 更新学生 | 先查学号再覆盖 |
-| 遍历全部 | 列出所有学生信息 |
-| 退出 | 返回上级 |
+📚 **Documentation** | 🐛 **Issues** | 💬 **Discussions** | 📧 **Contact**
 
 ---
 
-## 🏙️ 进阶版（控制台 / SQLite 持久化）
+## 🗺 Evolution Roadmap
 
-> 路径：`src/main/java/com/studentmanage/` — Maven 项目，SQLite + BCrypt
+```mermaid
+graph LR
+    A[🏘️ Novice<br/>Console + ArrayList] --> B[🏙️ Advanced<br/>SQLite + BCrypt + MVC]
+    B --> C[🚀 Universe<br/>Spring Boot + H2 + Vue3]
+    C --> D[☄️ BigBang<br/>MySQL + Redis + Docker + CI/CD]
 
-### 🆚 相比新手村的核心升级
-
-| 维度 | 新手村 | 进阶版 |
-|------|--------|--------|
-| 存储 | `ArrayList` 内存（重启即丢） | **SQLite 数据库**（持久化） |
-| 密码安全 | 明文存储 | **BCrypt 加盐哈希** |
-| 架构 | 单文件平铺 | **MVC 分层**（model/dao/service/ui） |
-| 项目结构 | 裸 `.java` 文件 | **Maven 工程**（pom.xml） |
-| 学生字段 | 4 项（id/name/age/sex） | **8 项**（+院系/班级/邮箱/手机） |
-| 查询方式 | 只按学号 | **多维度**：学号 / 姓名模糊 / 院系过滤 |
-| 统计 | 无 | **学生总数统计** |
-
-### 技术栈
-
-- **Java 17+**
-- **Maven** — 依赖管理 & 打包
-- **SQLite (JDBC)** — 零配置嵌入式数据库
-- **jBCrypt** — 密码加盐哈希
-
-### 快速开始
-
-```bash
-# 1. 编译
-mvn clean compile
-
-# 2. 运行
-mvn exec:java -Dexec.mainClass="com.studentmanage.MainApp"
-
-# 3. 打包为可执行 jar
-mvn clean package
-java -jar target/student-management-2.0.0-advanced-jar-with-dependencies.jar
+    style A fill:#ffd700,color:#333
+    style B fill:#ff8c00,color:#fff
+    style C fill:#667eea,color:#fff
+    style D fill:#e74c3c,color:#fff
 ```
 
-### 项目结构
+| Version | Directory | Interface | Database | Security | Frontend | Deployment |
+|---------|-----------|-----------|----------|----------|----------|------------|
+| 🏘️ **Novice** | `Student_manage/` | Console | `ArrayList` | None | N/A | `javac *.java` |
+| 🏙️ **Advanced** | `src/main/java/` | Console | SQLite | BCrypt | N/A | `mvn exec:java` |
+| 🚀 **Universe** | `universe/` | Browser SPA | H2 | JWT | Vue3 (CDN) | `mvn spring-boot:run` |
+| ☄️ **BigBang** | `bigbang/` | Full Web App | MySQL 8 + Redis | JWT Dual-Token | **Vue3+Vite+TS** | **Docker Compose** |
+
+---
+
+## ☄️ BigBang — Quick Start
+
+```bash
+# One-command launch
+cd bigbang
+docker-compose up -d
+
+# Access
+open http://localhost          # Web App (Nginx → Vue + API)
+open http://localhost:8080/doc.html  # Swagger API Docs
+
+# Default Admin
+Username: admin    Password: Admin@123
+```
+
+<details>
+<summary>📦 Local Development Setup</summary>
+
+```bash
+# 1. Start infrastructure
+cd bigbang && docker-compose up -d mysql redis
+
+# 2. Backend
+mvn spring-boot:run          # http://localhost:8080
+
+# 3. Frontend (separate terminal)
+cd bigbang-frontend
+npm install && npm run dev   # http://localhost:5173
+```
+</details>
+
+---
+
+## 🏗 Architecture
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                     🌐 Nginx :80 (Reverse Proxy)              │
+│  ┌─────────────────────────┐  ┌────────────────────────────┐ │
+│  │   Vue 3 + Vite + TS     │  │   Spring Boot 3.2 :8080    │ │
+│  │   ┌──────────┐          │  │   ┌────────────────────┐   │ │
+│  │   │ Element+ │  Axios   │  │   │  Security Config   │   │ │
+│  │   │ ECharts  │◄─401────┼──┼──►│  JWT Filter        │   │ │
+│  │   │ Pinia    │  Refresh │  │   │  AOP Log Aspect    │   │ │
+│  │   └──────────┘          │  │   └───────┬────────────┘   │ │
+│  └─────────────────────────┘  │          │                 │ │
+│                               │   ┌──────▼──────────┐      │ │
+│  ┌──────────┐  ┌──────────┐   │   │  Service Layer  │      │ │
+│  │ MySQL 8  │  │ Redis 7  │◄──┼───┤  ┌──────────┐   │      │ │
+│  │ :3306    │  │ :6379    │   │   │  │ Auth     │   │      │ │
+│  └──────────┘  └──────────┘   │   │  │ Student  │   │      │ │
+│     ▲ Flyway       ▲ Cache    │   │  │ Log      │   │      │ │
+│     │ Migration     │ Manager  │   │  │ File     │   │      │ │
+│                               │   │  └──────────┘   │      │ │
+│                               │   └──────────────────┘      │ │
+└──────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 🛠 Tech Stack
+
+| Category | Technology | Version | Purpose |
+|----------|-----------|---------|---------|
+| **Framework** | Spring Boot | 3.2.5 | REST API Backend |
+| **Database** | MySQL | 8.0 | Primary Storage |
+| **Cache** | Redis | 7 (Alpine) | Session & Query Cache |
+| **ORM** | Spring Data JPA | Hibernate 6.4 | Database Abstraction |
+| **Migration** | Flyway | 10.x | Versioned DDL |
+| **Mapping** | MapStruct | 1.5.5 | Entity ↔ DTO (Compile-time) |
+| **Security** | Spring Security + JWT | jjwt 0.12 | Dual-Token Auth (access+refresh) |
+| **API Docs** | Knife4j (Swagger) | 4.5 | Auto-generated OpenAPI 3 |
+| **Excel** | Apache POI | 5.2.5 | Import / Export |
+| **Frontend** | Vue 3 + Vite + TypeScript | Latest | SPA |
+| **UI Library** | Element Plus | 2.6 | Component Library |
+| **Charts** | ECharts | 5.5 | Data Visualization |
+| **State** | Pinia | 2.1 | State Management |
+| **HTTP** | Axios | 1.6 | API Client + JWT Interceptor |
+| **Testing** | JUnit 5 + Mockito | Latest | Unit & Integration Tests |
+| **CI/CD** | GitHub Actions | — | Build → Test → Coverage |
+| **Container** | Docker + Compose | Latest | One-Click Deploy |
+| **Proxy** | Nginx | Alpine | Reverse Proxy |
+
+---
+
+## 📡 API Reference
+
+Full API documentation available at `http://localhost:8080/doc.html` after starting the server.
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| `POST` | `/api/auth/login` | Public | Login → JWT Pair |
+| `POST` | `/api/auth/register` | Public | Register |
+| `POST` | `/api/auth/refresh` | Public | Refresh Token |
+| `POST` | `/api/auth/reset-password` | Public | Forgot Password |
+| `GET` | `/api/auth/me` | JWT | Current User Info |
+| `GET` | `/api/students?page=&size=` | All | List (Paginated) |
+| `POST` | `/api/students` | Admin/Teacher | Add Student |
+| `PUT` | `/api/students/{id}` | Admin/Teacher | Update Student |
+| `DELETE` | `/api/students/{id}` | Admin/Teacher | Delete Student |
+| `GET` | `/api/students/search?keyword=` | All | Search by Name/Dept |
+| `GET` | `/api/dashboard` | Admin/Teacher | ECharts Stats |
+| `GET` | `/api/export/excel` | Admin/Teacher | Download Excel |
+| `GET` | `/api/logs` | Admin | Audit Logs |
+| `POST` | `/api/files/upload` | Authenticated | File Upload |
+
+---
+
+## 📂 Project Structure
 
 ```
 student_management/
-├── Student_manage/          ← 新手村（原版，已冻结）
+│
+├── Student_manage/              # 🏘️ Novice: Basic Java OOP
 │   ├── Application.java
-│   ├── User.java
-│   ├── Student.java
+│   ├── User.java / Student.java
 │   └── cecha.java
-├── src/main/java/com/studentmanage/
-│   ├── MainApp.java         ← 入口
-│   ├── model/
-│   │   ├── User.java        ← 用户实体
-│   │   └── Student.java     ← 学生实体（8字段）
-│   ├── dao/
-│   │   ├── DatabaseManager.java  ← SQLite 连接 & 建表
-│   │   ├── UserDAO.java          ← 用户 CRUD
-│   │   └── StudentDAO.java       ← 学生 CRUD + 模糊搜索
-│   ├── service/
-│   │   ├── AuthService.java      ← 登录/注册/忘记密码
-│   │   └── StudentService.java   ← 学生管理业务逻辑
-│   └── ui/
-│       ├── LoginMenu.java        ← 认证界面
-│       └── StudentMenu.java      ← 学生管理界面
-├── pom.xml                 ← Maven 配置
-└── README.md
+│
+├── src/main/java/com/studentmanage/  # 🏙️ Advanced: Maven + SQLite
+│   ├── model/   User / Student (Entity)
+│   ├── dao/     DatabaseManager / UserDAO / StudentDAO
+│   ├── service/ AuthService / StudentService
+│   └── ui/      LoginMenu / StudentMenu
+│
+├── universe/                    # 🚀 Universe: Spring Boot + Vue CDN
+│   ├── pom.xml
+│   └── src/main/  java/...  +  resources/static/
+│
+├── bigbang/                     # ☄️ BigBang: Full-Stack Production
+│   ├── docker-compose.yml       # MySQL + Redis + App + Nginx
+│   ├── Dockerfile               # Multi-stage build
+│   ├── nginx/nginx.conf         # Reverse proxy config
+│   ├── .github/workflows/ci.yml # CI/CD Pipeline
+│   └── src/main/
+│       ├── java/.../bigbang/
+│       │   ├── config/     (5 files)  Security/Redis/Swagger/WebMvc
+│       │   ├── security/   (2 files)  JwtUtil/JwtAuthFilter
+│       │   ├── model/      (12 files) Entity/DTO/Enum/Mapper
+│       │   ├── repository/ (4 files)  JPA + Specification
+│       │   ├── service/    (4 files)  Auth/Student/Log/File
+│       │   ├── controller/ (4 files)  REST API Endpoints
+│       │   ├── aspect/     (1 file)   @AOP Logging
+│       │   └── exception/  (2 files)  Global Error Handler
+│       └── resources/
+│           ├── application*.yml       # Multi-env (dev/docker/ci)
+│           └── db/migration/          # Flyway V1+V2
+│
+├── bigbang-frontend/            # ☄️ BigBang Frontend
+│   ├── package.json / vite.config.ts
+│   └── src/
+│       ├── router/    Vue Router
+│       ├── stores/    Pinia (auth)
+│       ├── api/       Axios + JWT interceptor
+│       ├── views/     Login / Dashboard / Students / Logs
+│       ├── components/ AppLayout
+│       └── types/     TypeScript definitions
+│
+└── README.md / README.zh-CN.md / README.ja.md
 ```
-
-### 功能清单
-
-#### 认证模块
-
-- ✅ 登录（用户名 + 密码 + 验证码）
-- ✅ 注册（用户名/身份证/手机号校验 → BCrypt 哈希入库）
-- ✅ 忘记密码（三重身份验证）
-
-#### 学生管理模块
-
-- ✅ 添加学生（8 项字段）
-- ✅ 删除学生（按学号）
-- ✅ 查询学生（按学号精确匹配）
-- ✅ **搜索学生（按姓名模糊匹配）** 🆕
-- ✅ **过滤学生（按院系）** 🆕
-- ✅ 更新学生信息（全字段覆盖）
-- ✅ 显示全部学生（格式化表格）
-- ✅ **学生总数统计** 🆕
 
 ---
 
-## 🚀 宇宙版（Web 全栈 / 前后端一体化）
+## 🎓 Engineering Practices (BigBang)
 
-> 路径：`universe/` — Spring Boot 3.2 + Vue 3 SPA + ECharts + JWT
-
-### 🆚 相比进阶版的核心升级
-
-| 维度 | 进阶版 | 宇宙版 |
-|------|--------|--------|
-| 访问方式 | 命令行 | **浏览器 Web 界面** |
-| 后端 | 裸 JDBC | **Spring Boot REST API** |
-| 前端 | 无 | **Vue 3 SPA + ECharts** |
-| 数据库 | SQLite | **H2（嵌入式，零配置）** |
-| 认证 | BCrypt | **Spring Security + JWT** |
-| 角色 | 无 | **ADMIN / TEACHER / STUDENT** |
-| 可视化 | 无 | **ECharts 饼图（院系/性别分布）** |
-| 导出 | 无 | **Excel 导出（Apache POI）** |
-| 审计 | 无 | **操作日志表** |
-
-### 技术栈
-
-| 层 | 技术 |
-|----|------|
-| 后端框架 | Spring Boot 3.2.5 |
-| 安全 | Spring Security + JWT（jjwt 0.12） |
-| 持久层 | Spring Data JPA + H2 Database |
-| 前端框架 | Vue 3 (CDN) + ECharts 5.5 |
-| Excel | Apache POI 5.2 |
-| 构建 | Maven |
-
-### 快速开始
-
-```bash
-# 1. 编译
-cd universe
-mvn clean compile
-
-# 2. 启动（首次运行自动创建 H2 数据库）
-mvn spring-boot:run
-
-# 3. 打开浏览器
-# http://localhost:8080
-# 初始管理员: admin / admin123
-```
-
-### 项目结构
-
-```
-universe/
-├── pom.xml
-└── src/main/
-    ├── java/com/studentmanage/universe/
-    │   ├── UniverseApplication.java
-    │   ├── config/
-    │   │   ├── SecurityConfig.java       ← 安全配置+权限矩阵
-    │   │   └── JwtAuthFilter.java        ← JWT 过滤器
-    │   ├── model/
-    │   │   ├── User.java                 ← 用户实体（含角色枚举）
-    │   │   ├── Student.java              ← 学生实体（8字段）
-    │   │   └── OperationLog.java         ← 操作日志
-    │   ├── repository/
-    │   │   ├── UserRepository.java
-    │   │   ├── StudentRepository.java
-    │   │   └── OperationLogRepository.java
-    │   ├── service/
-    │   │   ├── AuthService.java
-    │   │   ├── StudentService.java
-    │   │   └── LogService.java
-    │   ├── controller/
-    │   │   ├── AuthController.java       ← /api/auth/**
-    │   │   ├── StudentController.java    ← /api/students/**
-    │   │   └── DashboardController.java  ← /api/dashboard, /api/export/**
-    │   ├── dto/                          ← 请求/响应 DTO
-    │   └── util/
-    │       └── JwtUtil.java              ← JWT 生成/解析
-    └── resources/
-        ├── application.yml
-        ├── data.sql                      ← 初始化管理员
-        └── static/                       ← 前端 SPA
-            ├── index.html
-            ├── css/style.css
-            └── js/app.js
-```
-
-### REST API 一览
-
-| 方法 | 路径 | 权限 | 说明 |
-|------|------|------|------|
-| POST | `/api/auth/login` | 公开 | 登录，返回 JWT |
-| POST | `/api/auth/register` | 公开 | 注册 |
-| POST | `/api/auth/reset-password` | 公开 | 忘记密码 |
-| GET | `/api/auth/me` | 登录 | 当前用户信息 |
-| GET | `/api/students` | ALL | 学生列表 |
-| POST | `/api/students` | ADMIN/TEACHER | 添加学生 |
-| PUT | `/api/students/{id}` | ADMIN/TEACHER | 更新学生 |
-| DELETE | `/api/students/{id}` | ADMIN/TEACHER | 删除学生 |
-| GET | `/api/students/search?name=` | ALL | 姓名模糊搜索 |
-| GET | `/api/students/filter?dept=` | ALL | 院系过滤 |
-| GET | `/api/dashboard` | ADMIN/TEACHER | 仪表盘统计 |
-| GET | `/api/export/excel` | ADMIN/TEACHER | 导出 Excel |
-| GET | `/api/logs` | ADMIN | 操作日志 |
-
-### 权限矩阵
-
-| 功能 | ADMIN | TEACHER | STUDENT |
-|------|-------|---------|---------|
-| 查看仪表盘 | ✅ | ✅ | ❌ |
-| 添加/删除/编辑学生 | ✅ | ✅ | ❌ |
-| 查看学生列表 | ✅ | ✅ | ✅ |
-| 导出 Excel | ✅ | ✅ | ❌ |
-| 查看操作日志 | ✅ | ❌ | ❌ |
-
-### 功能清单
-
-- ✅ JWT 认证（登录/注册/忘记密码）
-- ✅ 三角色权限控制
-- ✅ 学生 CRUD + 多维度搜索
-- ✅ ECharts 仪表盘（院系分布 + 性别比例饼图）
-- ✅ Excel 一键导出
-- ✅ 操作日志审计
-- ✅ Vue 3 响应式 SPA 前端
-- ✅ H2 嵌入式数据库（零配置）
+| # | Practice | Implementation |
+|---|----------|---------------|
+| 1 | **Multi-Environment Config** | `application-{dev,docker,ci}.yml` |
+| 2 | **Database Migration** | Flyway V1 (schema) + V2 (seed data) |
+| 3 | **Dual-Token JWT** | Access (1h) + Refresh (7d) Rotation |
+| 4 | **Redis Caching** | `@Cacheable` — students:5min, dashboard:15min |
+| 5 | **AOP Logging** | `@Aspect` auto-capture IP + operation |
+| 6 | **Global Exception Handling** | `@RestControllerAdvice` 5 exception types |
+| 7 | **Bean Validation** | `@Valid` + `@NotBlank`/`@Size` |
+| 8 | **MapStruct Mapping** | Entity ↔ DTO at compile-time (zero reflection) |
+| 9 | **Server-Side Pagination** | `Pageable` + `JpaSpecificationExecutor` |
+| 10 | **API Documentation** | Knife4j / OpenAPI 3 auto-generation |
+| 11 | **Docker Multi-Stage** | `builder(jdk)` → `runner(jre)` for smaller image |
+| 12 | **Health Checks** | Actuator + Docker `HEALTHCHECK` |
+| 13 | **CI/CD** | GitHub Actions: compile → test → JaCoCo |
+| 14 | **Frontend-Backend Separation** | Nginx proxy + Vite dev proxy |
+| 15 | **JWT Silent Refresh** | Axios interceptor: 401 → auto-refresh |
+| 16 | **Method-Level RBAC** | `@PreAuthorize("hasAnyRole('ADMIN','TEACHER')")` |
 
 ---
 
-## ☄️ 宇宙爆炸版（全链路工程化项目）
+## 🤝 Contributing
 
-> 路径：`bigbang/` + `bigbang-frontend/` — 本科生简历级全栈项目
+Contributions welcome! Here's how:
 
-### 🆚 四代进化总览
+1. 🍴 Fork the repository
+2. 🌿 Create a feature branch (`git checkout -b feat/amazing-feature`)
+3. ✅ Write tests for your changes
+4. 💾 Commit (`git commit -m 'feat: add amazing feature'`)
+5. 📤 Push (`git push origin feat/amazing-feature`)
+6. 🔃 Open a Pull Request
 
-| 维度 | 新手村 | 进阶版 | 宇宙版 | ☄️ 爆炸版 |
-|------|--------|--------|--------|-----------|
-| 界面 | 控制台 | 控制台表格 | 浏览器 SPA | **Vue3+Vite+TS+ElementPlus** |
-| 存储 | ArrayList | SQLite | H2 | **MySQL 8.0** |
-| 缓存 | — | — | — | **Redis 7 (Spring Cache)** |
-| 认证 | 无 | BCrypt | JWT 单Token | **JWT 双Token(access+refresh)** |
-| 安全 | 无 | 无 | Spring Security | **Security + Method级鉴权** |
-| ORM | — | JDBC | JPA | **JPA + JpaSpecificationExecutor** |
-| 对象转换 | — | — | — | **MapStruct (编译期，零反射)** |
-| 分页 | 无 | 前端假分页 | 前端假分页 | **后端真分页(Pageable)** |
-| 迁移 | — | — | — | **Flyway (版本化DDL)** |
-| 文档 | — | — | 无 | **Knife4j/Swagger** |
-| 校验 | 手动 | 手动 | 无 | **@Valid + Bean Validation** |
-| 异常 | printStackTrace | RuntimeException | RuntimeException | **全局异常处理器 + BusinessException** |
-| 日志 | System.out | System.err | 手动调用 | **AOP 自动切面 + IP 记录** |
-| 测试 | 无 | 无 | 无 | **JUnit5 + Mockito 7个单元测试** |
-| CI/CD | — | — | — | **GitHub Actions** |
-| 部署 | javac | mvn exec | mvn spring-boot:run | **Docker + docker-compose 一键部署** |
-| 前端工程 | — | — | 3 个 CDN 文件 | **Vue3+Vite+TS+Pinia 完整工程** |
-| JWT刷新 | — | — | 无 | **Axios拦截器自动无感刷新** |
-
-### 快速开始
-
-```bash
-# Docker 一键启动
-cd bigbang
-docker-compose up -d
-# 访问 http://localhost
-# 初始化管理员: admin / Admin@123
-# Swagger: http://localhost:8080/doc.html
-```
-
-### 为什么这版有含金量？
-
-| 工程实践 | 技术体现 |
-|----------|---------|
-| 多环境配置 | application-{dev,docker,ci}.yml |
-| 数据库版本管理 | Flyway V1/V2 迁移脚本 |
-| 双Token认证 | accessToken(1h) + refreshToken(7d) 旋转策略 |
-| 缓存策略 | Redis @Cacheable 学生5min/仪表盘15min |
-| AOP切面编程 | LogAspect 零侵入操作日志 + IP记录 |
-| 全局异常处理 | @RestControllerAdvice 5类异常统一处理 |
-| Bean Validation | @Valid + @NotBlank/@Size 请求校验 |
-| MapStruct转换 | 编译期 Entity↔DTO 零反射开销 |
-| 后端真分页 | Pageable + JpaSpecificationExecutor |
-| API文档 | Knife4j/Swagger 自动生成 |
-| Docker多阶段构建 | builder(jdk) + runner(jre) 减小镜像 |
-| CI/CD | GitHub Actions: 编译→测试→JaCoCo覆盖率 |
-| JWT无感刷新 | Axios响应拦截器 401自动refresh |
-| Method级鉴权 | @PreAuthorize("hasAnyRole('ADMIN','TEACHER')") |
+Please ensure `mvn test` passes and follow the existing code style.
 
 ---
 
-## License
+## 📄 License
 
-MIT
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+
+---
+
+<div align="center">
+  <sub>Built with ❤️ by <a href="https://github.com/lechan775">lechan775</a> | Powered by Spring Boot & Vue 3</sub>
+</div>
