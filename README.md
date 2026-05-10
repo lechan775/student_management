@@ -13,10 +13,10 @@
 
 <p>
   <a href="https://github.com/lechan775/student_management/actions">
-    <img src="https://img.shields.io/github/actions/workflow/status/lechan775/student_management/.github/workflows/ci.yml?branch=main&label=CI&logo=github&style=flat-square" alt="CI Status">
+    <img src="https://img.shields.io/github/actions/workflow/status/lechan775/student_management/ci.yml?branch=main&label=CI&logo=github&style=flat-square" alt="CI Status">
   </a>
   <a href="https://github.com/lechan775/student_management/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/lechan775/student_management?style=flat-square&color=blue" alt="License MIT">
+    <img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square" alt="License MIT">
   </a>
   <img src="https://img.shields.io/badge/Java-17%2B-orange?style=flat-square&logo=openjdk" alt="Java 17+">
   <img src="https://img.shields.io/badge/Spring%20Boot-3.2.5-brightgreen?style=flat-square&logo=springboot" alt="Spring Boot 3.2.5">
