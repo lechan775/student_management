@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  # ==================== MySQL 8.0 ====================
+  mysql:
+    image: mysql:8.0
+    container_name: bigbang-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: BigBang@2026
+      MYSQL_DATABASE: student_manage
+      MYSQL_CHARSET: utf8mb4
+      MYSQL_COLLATION: utf8mb4_unicode_ci
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - bigbang-net
+
+  # ==================== Redis 7 ====================
+  redis:
+    image: redis:7-alpine
+    container_name: bigbang-redis
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - bigbang-net
+
+  # ==================== Spring Boot App ====================
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bigbang-app
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - bigbang-net
+    restart: unless-stopped
+
+  # ==================== Nginx ====================
+  nginx:
+    image: nginx:alpine
+    container_name: bigbang-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./bigbang-frontend/dist:/usr/share/nginx/html:ro
+    depends_on:
+      - app
+    networks:
+      - bigbang-net
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+  redis_data:
+
+networks:
+  bigbang-net:
+    driver: bridge

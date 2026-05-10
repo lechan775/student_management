@@ -1,0 +1,27 @@
+# ==================== 开发环境 ====================
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/student_manage?useUnicode=true&characterEncoding=utf8mb4&serverTimezone=Asia/Shanghai&createDatabaseIfNotExist=true
+    username: root
+    password: BigBang@2026
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 3000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 4
+          min-idle: 2
+
+  flyway:
+    enabled: false   # dev 环境用 JPA ddl-auto: update 快速迭代
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+debug: true
